@@ -1,6 +1,3 @@
-# my-student-tracker
- A Student Performance and Attendance Tracker built using OOP in Python. 
- 
 # EduTrack-OOP 📊
 
 A clean and efficient **Student Performance & Attendance Tracker** built using Object-Oriented Programming (OOP) principles in Python.
