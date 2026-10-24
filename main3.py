@@ -318,3 +318,212 @@ if __name__ == "__main__":
     my_cart.add_to_cart(phone,20)
     my_cart.view_cart()
     my_cart.calculate_bill(store_products )
+
+
+#PROJECT-7
+#SMART VENDING MACHINE
+class Item:
+    def __init__(self,name,price,code,stock=5):
+        self.name = name
+        self.price = price
+        self.code = code
+        self.stock = stock
+
+    def display_item_details(self):
+        print(f"Code: {self.code} | Item: {self.name} | price: {self.price} | Stock: {self.stock}")
+
+
+class vendinMachine:
+    def __init__(self):
+        self.inventory = []
+        self.total_cash = 0
+        self.current_balance = 0
+
+    def add_item_to_machine(self,item):
+        self.inventory.append(item)
+
+    def show_menu(self):
+        print("\n-------VENDING MACHINE MENU--------")
+        if not self.inventory:
+            print("The machine is empty!")
+            return
+        for item in self.inventory:
+            item.display_item_details()
+
+    def insert_money(self,amount):
+        if amount > 0:
+            self.current_balance += amount
+            print(f"successfully deposited: {amount} Current balance: {self.current_balance}")
+        else:
+            print("Please insert a vailed amount")
+
+    def buy_product(self,code):
+            target_item = None
+            for item in self.inventory:
+                if item.code.upper() == code.upper():
+                    target_item = item
+                    break
+
+            if target_item is None:
+                print("Invailed code! Please choose a vailed slot")
+                return
+
+            if target_item.stock <=0:
+                print(f"Sorry, {target_item.name} is out of stock!")
+                return
+
+            if self.current_balance < target_item.price:
+               print(f"Insufficient funds! {target_item.name} costs {target_item.name} Please deposit more money")
+               return
+
+            target_item.stock -=1
+            self.total_cash += target_item.price
+
+            change = self.current_balance - target_item.price
+            print(f"Dispensing {target_item.name}...Enjoy your sanck!")
+
+            if change > 0:
+                print(f"Returning your change: {change}")
+            self.current_balance = 0
+
+if __name__ == "__main__":
+    vm = vendinMachine()
+
+    chips = Item("Lays chips" , 20 , "A1" , stock=2)
+    soda = Item("coca cola" , 40 , "B1" , stock=5)
+
+    vm.add_item_to_machine(chips)
+    vm.add_item_to_machine(soda)
+
+    vm.show_menu()
+
+    print("\n------Attempting to buy without money-------")
+    vm.buy_product("A1")
+
+    print("\n------Inserting money-------")
+    vm.insert_money(50)
+
+    print("\n-------buying Item----------")
+    vm.buy_product("A1")
+
+    vm.show_menu()
+
+#PROJECT-8
+#Digital Movie Ticket Booking
+class Movie:
+    def __init__(self, title,genre,price):
+        self.title = title
+        self.genre = genre
+        self.price = price
+
+class Showtime:
+    def __init__(self,movie,time,rows=3,cols=4):
+        self.movie = movie
+        self.time = time
+        self.seating_grid = []
+        for r in range(rows):
+            row_list = []
+            for c in range(cols):
+                row_list.append("0")
+            self.seating_grid.append(row_list)
+
+    def display_seats(self):
+        print(f"\n---------Seating Arrangement for {self.movie.title} ({self.time})--------")
+        for r in range(len(self.seating_grid)):
+            print(f"Row {r}:" , end="")
+            for c in range(len(self.seating_grid[r])):
+                print(f"[{self.seating_grid[r][c]}] " , end="")
+            print()
+
+    def reserve_seat(self,row_index,col_index):
+        if row_index < 0 or row_index >= len(self.seating_grid) or col_index < 0 or col_index >= len(self.seating_grid[0]):
+            print("Invailed seat coordinates!")
+            return False
+        
+        if self.seating_grid[row_index][col_index] == "X":
+            print("Sorry this seat is already booked!")
+            return False
+        else:
+            self.seating_grid[row_index][col_index] = "X"
+            return True
+
+class BookingEngine:
+    def __init__(self):
+        self.shows = []
+
+    def add_show(self,showtime_object):
+        self.shows.append(showtime_object)
+
+    def list_available_shows(self):
+        if not self.shows:
+            print("No active screening running today")
+            return False
+        
+        for index in range(len(self.shows)):
+            current_show = self.shows[index]
+            print(f"[{index}] Title: {current_show.movie.title} | Time: {current_show.time} | Price: {current_show.movie.price}")
+        return True
+
+    def book_ticket(self,show_index,row,col):
+        if show_index < 0 or show_index >= len(self.shows):
+            print("Invailed movie selection index choice!")
+            return False
+
+        selected_show = self.shows[show_index]
+
+        booking_success = selected_show.reserve_seat(row,col)
+        if booking_success:
+            print("\n===============================================")
+            print("               TICKET CONFIRMED                  ")
+            print("=================================================")
+            print(f"Title: {selected_show.movie.title}| Time: {selected_show.time} | Row: {row}| seat: {col}|Price: {selected_show.movie.price}")
+            print("======================================================")
+            return True
+        else:
+            return False
+
+if __name__ == "__main__":
+    engine = BookingEngine()
+
+    m1 = Movie("Inception" , "Sci-Fi" , 12)
+    m2 = Movie("The Dark knight" , "Action" , 15)
+
+    s1 = Showtime(m1 , "03:00 PM")
+    s2 = Showtime(m2 , "07:30 PM")
+
+    engine.add_show(s1)
+    engine.add_show(s2)
+
+    while True:
+        print("\n-------- DIGITAL MOVIE TICKET BOOKING ---------")
+        print("1.View Movie Schedules \n2.check seat layout \n3.Book Ticket  \n4.Exit")
+        user_choice = input("Select an option (1-4):")
+        if user_choice == "1":
+            engine.list_available_shows()
+        elif user_choice == "2":
+            if engine.list_available_shows():
+                try:
+                    show_idx = int(input("Enter movie show index to view seating map:"))
+                    if 0 <= show_idx < len(engine.shows):
+                        engine.shows[show_idx].display_seats()
+                    else:
+                        print("Invailed show selection!")
+                except ValueError:
+                    print("Please enter numeric integers only")
+               
+        elif user_choice == "3":
+            if engine.list_available_shows():
+                try:
+                    show_idx = int(input("Enter movie show index:"))
+                    row_num = int(input("Enter Row number:"))
+                    col_num = int(input("Enter seat number:"))
+                    engine.book_ticket(show_idx , row_num , col_num)
+                except ValueError:
+                    print("Please enter vailed numeric integer choice only")
+
+        elif user_choice == "4":
+            print("Exiting system runtime program tracker...GoodBye!")
+            break
+        else:
+            print("Invailed choice! Please select an option 1 and 4")
+        
