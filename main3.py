@@ -708,11 +708,3 @@ if __name__ == "__main__":
     driver1.accept_ride()
     driver1.accept_ride()
     driver1.complete_ride()
-
-
-
-
-
-
-
-
