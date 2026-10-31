@@ -900,9 +900,3 @@ if __name__ == "__main__":
             break
         else:
             print("Invalid Choice. Please enter a number between 1 and 7.")
-
-
-
-
-
-
